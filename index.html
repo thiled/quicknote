@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <style>
+      body {
+        tab-size: 6;
+      }
+      #input {
+        width: 200px;
+        height: 100px;
+        white-space: pre;
+      }
+    </style>
+  </head>
+  <body>
+    <div contenteditable="true" id="input"></div>
+    <!-- <textarea id="input"></textarea> -->
+    <script>
+      document.getElementById('input').addEventListener('keydown', e => {
+        if (e.key === 'Tab') {
+          e.preventDefault();
+          let sel = document.getSelection();
+          let range = sel.getRangeAt(0); //获取选择范围
+          range.deleteContents(); //删除选中的内容
+          var tabNode = document.createTextNode('\t');
+          range.insertNode(tabNode);
+          range.setStartAfter(tabNode);
+          range.setEndAfter(tabNode);
+          sel.removeAllRanges();
+          sel.addRange(range);
+          // let str = e.target.value;
+          // console.log(e.target.selectionStart)
+          // e.target.value =
+          //   str.substring(0, e.target.selectionStart) +
+          //   '\t' +
+          //   str.substring(e.target.selectionStart);
+        }else if(e.key==="Enter"){
+			console.log('enter')
+		}
+      });
+    </script>
+  </body>
+</html>
