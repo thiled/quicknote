@@ -10,9 +10,10 @@
         tab-size: 6;
       }
       #input {
-        width: 200px;
-        height: 100px;
+        /* width: 200px; */
+        min-height: 100px;
         white-space: pre;
+        border: #ccc solid 1px;
       }
     </style>
   </head>
@@ -20,27 +21,41 @@
     <div contenteditable="true" id="input"></div>
     <!-- <textarea id="input"></textarea> -->
     <script>
+      function insertRange(sel, str) {
+        let range = sel.getRangeAt(0); //获取选择范围
+        range.deleteContents(); //删除选中的内容
+        var tabNode = document.createTextNode(str);
+        range.insertNode(tabNode);
+        range.setStartAfter(tabNode);
+        range.setEndAfter(tabNode);
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
       document.getElementById('input').addEventListener('keydown', e => {
+        let sel = document.getSelection();
+
         if (e.key === 'Tab') {
           e.preventDefault();
-          let sel = document.getSelection();
-          let range = sel.getRangeAt(0); //获取选择范围
-          range.deleteContents(); //删除选中的内容
-          var tabNode = document.createTextNode('\t');
-          range.insertNode(tabNode);
-          range.setStartAfter(tabNode);
-          range.setEndAfter(tabNode);
-          sel.removeAllRanges();
-          sel.addRange(range);
-          // let str = e.target.value;
-          // console.log(e.target.selectionStart)
-          // e.target.value =
-          //   str.substring(0, e.target.selectionStart) +
-          //   '\t' +
-          //   str.substring(e.target.selectionStart);
-        }else if(e.key==="Enter"){
-			console.log('enter')
-		}
+          insertRange(sel, '\t');
+        } else if (e.key === 'Enter') {
+          console.log('enter');
+          e.preventDefault();
+          let lineText = sel.anchorNode.wholeText;
+          if (lineText) {
+            let match = lineText.match(/^(\t+)\w/);
+            if (match) {
+              console.log(match[1].length);
+              let tabs = '';
+              let tabsNum = match[1].length;
+              while (tabsNum > 0) {
+                tabs += '\t';
+                tabsNum--;
+              }
+              insertRange(sel, '\r\n' + tabs);
+              return;
+            }
+          }
+        }
       });
     </script>
   </body>
