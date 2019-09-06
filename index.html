@@ -4,22 +4,28 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>tab input</title>
+    <title>Quick notes</title>
     <style>
-      body {
-        tab-size: 6;
-      }
       #input {
+        tab-size: 6;
         min-height: 100px;
         white-space: pre;
         border: #ccc solid 1px;
         padding: 8px;
+      }
+      #input:focus {
+        outline: none;
       }
     </style>
   </head>
   <body>
     <div contenteditable="true" id="input"></div>
     <script>
+      let inputDom = document.getElementById('input');
+      const storeKey = 'quickNotes';
+      // restore
+      let storeData = window.localStorage.getItem(storeKey);
+      if (storeData) inputDom.innerHTML = storeData;
       // insert text node
       function insertRange(sel, str) {
         let range = sel.getRangeAt(0);
@@ -35,7 +41,7 @@
       let lastLineTabs = '';
       let isEnterInput = false;
 
-      document.getElementById('input').addEventListener('keydown', e => {
+      inputDom.addEventListener('keydown', e => {
         lastLineTabs = '';
         isEnterInput = false;
         let sel = document.getSelection();
@@ -59,12 +65,15 @@
         }
       });
 
-      document.getElementById('input').addEventListener('input', e => {
+      inputDom.addEventListener('input', e => {
         if (isEnterInput && lastLineTabs) {
           // repeat last line tabs
           let sel = document.getSelection();
           insertRange(sel, lastLineTabs);
         }
+        // store
+        let storeData = inputDom.innerHTML;
+        window.localStorage.setItem(storeKey, storeData);
       });
     </script>
   </body>
