@@ -32,15 +32,18 @@
       }
 
       let lastLineTabs = '';
-
+      let isEnterInput = false;
+      
       document.getElementById('input').addEventListener('keydown', e => {
         lastLineTabs = '';
+        isEnterInput = false;
         let sel = document.getSelection();
         if (e.key === 'Tab') {
           e.preventDefault();
           insertRange(sel, '\t');
         } else if (e.key === 'Enter') {
           // remember last line tabs
+          isEnterInput = true;
           let lineText = sel.anchorNode.wholeText;
           if (lineText) {
             let match = lineText.match(/^(\t+)\w/);
@@ -55,8 +58,8 @@
         }
       });
 
-      document.getElementById('input').addEventListener('keyup', e => {
-        if (e.key === 'Enter') {
+      document.getElementById('input').addEventListener('input', e => {
+        if (isEnterInput && lastLineTabs) {
           // repeat last line tabs
           let sel = document.getSelection();
           insertRange(sel, lastLineTabs);
