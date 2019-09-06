@@ -10,7 +10,6 @@
         tab-size: 6;
       }
       #input {
-        /* width: 200px; */
         min-height: 100px;
         white-space: pre;
         border: #ccc solid 1px;
@@ -19,7 +18,6 @@
   </head>
   <body>
     <div contenteditable="true" id="input"></div>
-    <!-- <textarea id="input"></textarea> -->
     <script>
       function insertRange(sel, str) {
         let range = sel.getRangeAt(0); //获取选择范围
@@ -31,30 +29,32 @@
         sel.removeAllRanges();
         sel.addRange(range);
       }
+      let prevTabs = '';
       document.getElementById('input').addEventListener('keydown', e => {
+        console.log(e)
+        prevTabs = '';
         let sel = document.getSelection();
-
         if (e.key === 'Tab') {
           e.preventDefault();
           insertRange(sel, '\t');
         } else if (e.key === 'Enter') {
-          console.log('enter');
-          e.preventDefault();
           let lineText = sel.anchorNode.wholeText;
           if (lineText) {
             let match = lineText.match(/^(\t+)\w/);
             if (match) {
-              console.log(match[1].length);
-              let tabs = '';
               let tabsNum = match[1].length;
               while (tabsNum > 0) {
-                tabs += '\t';
+                prevTabs += '\t';
                 tabsNum--;
               }
-              insertRange(sel, '\r\n' + tabs);
-              return;
             }
           }
+        }
+      });
+      document.getElementById('input').addEventListener('keyup', e => {
+        if (e.key === 'Enter') {
+          let sel = document.getSelection();
+          insertRange(sel, prevTabs);
         }
       });
     </script>
