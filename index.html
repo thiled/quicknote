@@ -19,32 +19,35 @@
   <body>
     <div contenteditable="true" id="input"></div>
     <script>
+      // insert text node
       function insertRange(sel, str) {
-        let range = sel.getRangeAt(0); //获取选择范围
-        range.deleteContents(); //删除选中的内容
-        var tabNode = document.createTextNode(str);
-        range.insertNode(tabNode);
-        range.setStartAfter(tabNode);
-        range.setEndAfter(tabNode);
+        let range = sel.getRangeAt(0);
+        range.deleteContents();
+        let txtNode = document.createTextNode(str);
+        range.insertNode(txtNode);
+        range.setStartAfter(txtNode);
+        range.setEndAfter(txtNode);
         sel.removeAllRanges();
         sel.addRange(range);
       }
-      let prevTabs = '';
+
+      let lastLineTabs = '';
+
       document.getElementById('input').addEventListener('keydown', e => {
-        console.log(e)
-        prevTabs = '';
+        lastLineTabs = '';
         let sel = document.getSelection();
         if (e.key === 'Tab') {
           e.preventDefault();
           insertRange(sel, '\t');
         } else if (e.key === 'Enter') {
+          // remember last line tabs
           let lineText = sel.anchorNode.wholeText;
           if (lineText) {
             let match = lineText.match(/^(\t+)\w/);
             if (match) {
               let tabsNum = match[1].length;
               while (tabsNum > 0) {
-                prevTabs += '\t';
+                lastLineTabs += '\t';
                 tabsNum--;
               }
             }
@@ -53,8 +56,9 @@
       });
       document.getElementById('input').addEventListener('keyup', e => {
         if (e.key === 'Enter') {
+          // repeat last line tabs
           let sel = document.getSelection();
-          insertRange(sel, prevTabs);
+          insertRange(sel, lastLineTabs);
         }
       });
     </script>
