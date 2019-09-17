@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Quick notes</title>
+    <title>QuickNote</title>
     <style>
       #input {
         tab-size: 6;
@@ -22,7 +22,7 @@
     <div contenteditable="true" id="input"></div>
     <script>
       let inputDom = document.getElementById('input');
-      const storeKey = 'quickNotes';
+      const storeKey = 'quickNote';
       // restore
       let storeData = window.localStorage.getItem(storeKey);
       if (storeData) inputDom.innerHTML = storeData;
