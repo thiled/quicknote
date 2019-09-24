@@ -6,8 +6,9 @@ class TabInput {
     let storeData = window.localStorage.getItem(storeKey);
     if (storeData) inputDom.innerHTML = storeData;
     // insert text node
-    const insertRange = (sel, str) => {
+    function insertRange(sel, str) {
       let range = sel.getRangeAt(0);
+      let isCollapsed = sel.isCollapsed;
       // check multi lines
       if (str === '\t') {
         str = sel
@@ -22,13 +23,20 @@ class TabInput {
 
       let txtNode = document.createTextNode(str);
       range.insertNode(txtNode);
-      range.setStartAfter(txtNode);
       range.setEndAfter(txtNode);
-      sel.removeAllRanges();
+      if (isCollapsed) {
+        range.setStartAfter(txtNode);
+        sel.removeAllRanges();
+      } else {
+        range.setStartBefore(txtNode);
+      }
       sel.addRange(range);
-    };
-    const removeTab = sel => {
+    }
+    // remove tab
+    function removeTab(sel) {
       let range = sel.getRangeAt(0);
+      let isCollapsed = sel.isCollapsed;
+
       let str = sel
         .toString()
         .split('\n')
@@ -40,11 +48,15 @@ class TabInput {
 
       let txtNode = document.createTextNode(str);
       range.insertNode(txtNode);
-      range.setStartAfter(txtNode);
       range.setEndAfter(txtNode);
-      sel.removeAllRanges();
+      if (isCollapsed) {
+        range.setStartAfter(txtNode);
+        sel.removeAllRanges();
+      } else {
+        range.setStartBefore(txtNode);
+      }
       sel.addRange(range);
-    };
+    }
     // init style
     inputDom.setAttribute('contenteditable', true);
     inputDom.style.whiteSpace = 'pre';
@@ -63,8 +75,8 @@ class TabInput {
           removeTab(sel);
         } else {
           insertRange(sel, '\t');
-          onInputChange();
         }
+        onInputChange();
       } else if (e.key === 'Enter') {
         // remember last line tabs
         isEnterInput = true;
