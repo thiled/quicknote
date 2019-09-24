@@ -8,7 +8,36 @@ class TabInput {
     // insert text node
     const insertRange = (sel, str) => {
       let range = sel.getRangeAt(0);
+      // check multi lines
+      if (str === '\t') {
+        str = sel
+          .toString()
+          .split('\n')
+          .map((value, index) => {
+            return '\t' + value;
+          })
+          .join('\n');
+        range.deleteContents();
+      }
+
+      let txtNode = document.createTextNode(str);
+      range.insertNode(txtNode);
+      range.setStartAfter(txtNode);
+      range.setEndAfter(txtNode);
+      sel.removeAllRanges();
+      sel.addRange(range);
+    };
+    const removeTab = sel => {
+      let range = sel.getRangeAt(0);
+      let str = sel
+        .toString()
+        .split('\n')
+        .map((value, index) => {
+          return value.replace(/^\t/, '');
+        })
+        .join('\n');
       range.deleteContents();
+
       let txtNode = document.createTextNode(str);
       range.insertNode(txtNode);
       range.setStartAfter(txtNode);
@@ -28,8 +57,14 @@ class TabInput {
       isEnterInput = false;
       let sel = document.getSelection();
       if (e.key === 'Tab') {
+        console.log(e);
         e.preventDefault();
-        insertRange(sel, '\t');
+        if (e.shiftKey) {
+          removeTab(sel);
+        } else {
+          insertRange(sel, '\t');
+          onInputChange();
+        }
       } else if (e.key === 'Enter') {
         // remember last line tabs
         isEnterInput = true;
@@ -46,6 +81,11 @@ class TabInput {
         }
       }
     });
+    function onInputChange() {
+      // store
+      let storeData = inputDom.innerHTML;
+      window.localStorage.setItem(storeKey, storeData);
+    }
     //
     inputDom.addEventListener('input', e => {
       if (isEnterInput && lastLineTabs) {
@@ -53,9 +93,7 @@ class TabInput {
         let sel = document.getSelection();
         insertRange(sel, lastLineTabs);
       }
-      // store
-      let storeData = inputDom.innerHTML;
-      window.localStorage.setItem(storeKey, storeData);
+      onInputChange();
     });
   }
 }
