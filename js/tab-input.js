@@ -82,9 +82,9 @@ class TabInput {
         isEnterInput = true;
         let lineText = sel.anchorNode.wholeText;
         if (lineText) {
-          let match = lineText.match(/^(\t+)\w/);
+          let match = lineText.match(/^\t+/);
           if (match) {
-            let tabsNum = match[1].length;
+            let tabsNum = match[0].length;
             while (tabsNum > 0) {
               lastLineTabs += '\t';
               tabsNum--;
