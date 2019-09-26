@@ -7,7 +7,7 @@
     <title>QuickNote</title>
     <style>
       body {
-        margin: 8px;
+        margin: 0px;
         background: #1e1e1e;
         color: #9cdcfe;
         font-family: Arial, Helvetica, sans-serif;
@@ -16,7 +16,12 @@
         tab-size: 6;
         min-height: 100px;
         line-height: 1.5;
-        padding: 8px;
+        padding: 16px;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
       }
       #input:focus {
         outline: none;
@@ -26,6 +31,7 @@
   <body>
     <div id="input" spellcheck="false"></div>
     <script src="./js/tab-input.js"></script>
+    <script src="./js/context-menu.js"></script>
     <script>
       let inputDom = document.getElementById('input');
       TabInput.init(inputDom);
