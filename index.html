@@ -8,8 +8,6 @@
     <style>
       body {
         margin: 0px;
-        background: #1e1e1e;
-        color: #9cdcfe;
         font-family: Arial, Helvetica, sans-serif;
       }
       #input {
@@ -22,14 +20,50 @@
         bottom: 0;
         left: 0;
         right: 0;
+        z-index: -1;
       }
       #input:focus {
         outline: none;
       }
+
+      #menu {
+        display: inline-block;
+        background: #eff0f2;
+        color: #000;
+        border: 1px solid #bdbec0;
+        display: none;
+        position: absolute;
+        font-size: 12px;
+      }
+      .menu-item {
+        display: block;
+        cursor: default;
+        padding: 5px 10px;
+      }
+      .menu-item.active {
+        background: #3daeea;
+        color: #fff;
+      }
+      .menu-item:hover {
+        background: #3daeea;
+        color: #fff;
+      }
     </style>
   </head>
-  <body>
+  <body class="1abc">
     <div id="input" spellcheck="false"></div>
+    <div id="menu">
+      <script id="menu-themes" type="text/html">
+        {{each themes}}
+            <span class="menu-item{{activeTheme === $value.name?' active':''}}"
+              data-bgcolor="{{$value.bgColor}}"
+              data-name="{{$value.name}}"
+              data-fontcolor="{{$value.fontColor}}">Theme - {{$value.name}}
+            </span>
+        {{/each}}
+      </script>
+    </div>
+    <script src="./libs/template-web.js"></script>
     <script src="./js/tab-input.js"></script>
     <script src="./js/context-menu.js"></script>
     <script>
