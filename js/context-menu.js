@@ -28,7 +28,7 @@ let themesMenu = {
       fontColor: '#9cdcfe'
     }
   ],
-  focused: 'Light'
+  focused: ''
 };
 // 上下文菜单，支持多级
 let contextMenu = [themesMenu];
@@ -43,7 +43,6 @@ Vue.component('context-menu', {
 let app = new Vue({
   el: '#app',
   data: {
-    activeTheme: storeTheme || 'Light',
     contextMenu: contextMenu,
     menuShow: false,
     menuPosition: {
@@ -66,9 +65,8 @@ let app = new Vue({
 });
 
 // restore theme
-if (storeTheme) {
-  applyTheme(storeTheme);
-}
+applyTheme(storeTheme || 'Light');
+
 // prevent default context menu
 document.oncontextmenu = e => {
   e.preventDefault();
