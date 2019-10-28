@@ -8,6 +8,7 @@
     <style>
       body {
         margin: 0px;
+        font-size: 16px;
         font-family: Arial, Helvetica, sans-serif;
       }
       #input {
@@ -28,7 +29,6 @@
       }
 
       #menu {
-        display: inline-block;
         background: #eff0f2;
         color: #000;
         border: 1px solid #bdbec0;
@@ -40,6 +40,7 @@
         display: block;
         cursor: default;
         padding: 5px 10px;
+        position: relative;
       }
       .menu-item.active {
         background: #3daeea;
@@ -49,28 +50,51 @@
         background: #3daeea;
         color: #fff;
       }
+      .sub-menu {
+        position: absolute;
+        display: none;
+        background: #eff0f2;
+        color: #000;
+        border: 1px solid #bdbec0;
+        font-size: 14px;
+        top: 0px;
+        left: 100%;
+      }
+      .menu-item:hover .sub-menu {
+        display: inline-block;
+      }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script>
   </head>
-  <body class="1abc">
-    <div id="input" spellcheck="false"></div>
-    <div id="menu">
-      <script id="menu-themes" type="text/html">
-        {{each themes}}
-            <span class="menu-item{{activeTheme === $value.name?' active':''}}"
-              data-bgcolor="{{$value.bgColor}}"
-              data-name="{{$value.name}}"
-              data-fontcolor="{{$value.fontColor}}">Theme - {{$value.name}}
-            </span>
-        {{/each}}
-      </script>
+  <body>
+    <div id="app">
+      <div id="input" spellcheck="false"></div>
+      <div id="menu">
+        <context-menu :menu="contextMenu"></context-menu>
+      </div>
     </div>
-    <script src="./libs/template-web.js"></script>
+    <script type="text/html" id="context-menu">
+        <div  >
+        <div v-for="item in menu.menu"
+          class="menu-item"
+          :data-name="item.name"
+          :data-parent="menu.name ? menu.name : '' "
+          @click="onMenuSelect(123)"
+        >
+          {{ item.name }}
+           <div v-if="item.menu" class="sub-menu">
+            <context-menu :menu="item"></context-menu>
+          </div>
+        </div>
+      </div>
+    </script>
+    <!-- <script src="./libs/template-web.js"></script> -->
     <script src="./js/tab-input.js"></script>
     <script src="./js/context-menu.js"></script>
     <script>
-      let inputDom = document.getElementById('input');
-      TabInput.init(inputDom);
-      inputDom.focus();
+      // let inputDom = document.getElementById('input');
+      // TabInput.init(inputDom);
+      // inputDom.focus();
     </script>
   </body>
 </html>
