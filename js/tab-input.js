@@ -69,7 +69,6 @@ class TabInput {
       isEnterInput = false;
       let sel = document.getSelection();
       if (e.key === 'Tab') {
-        console.log(e);
         e.preventDefault();
         if (e.shiftKey) {
           removeTab(sel);

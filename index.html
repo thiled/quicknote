@@ -32,7 +32,7 @@
         background: #eff0f2;
         color: #000;
         border: 1px solid #bdbec0;
-        display: none;
+        display: block;
         position: absolute;
         font-size: 14px;
       }
@@ -60,41 +60,40 @@
         top: 0px;
         left: 100%;
       }
-      .menu-item:hover .sub-menu {
+      .menu-item:hover > .sub-menu {
         display: inline-block;
       }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.0"></script>
+    <script src="./libs/vue.min.js"></script>
   </head>
   <body>
     <div id="app">
       <div id="input" spellcheck="false"></div>
-      <div id="menu">
+      <div id="menu" v-show="menuShow" :style="menuPosition">
         <context-menu :menu="contextMenu"></context-menu>
       </div>
     </div>
     <script type="text/html" id="context-menu">
-        <div  >
-        <div v-for="item in menu.menu"
+      <div>
+        <div v-for="item in menu"
           class="menu-item"
+          :class="{active:item.name === focused}"
           :data-name="item.name"
-          :data-parent="menu.name ? menu.name : '' "
-          @click="onMenuSelect(123)"
+          :data-parent="parent ? parent : '' "
         >
           {{ item.name }}
-           <div v-if="item.menu" class="sub-menu">
-            <context-menu :menu="item"></context-menu>
+          <div v-if="item.menu" class="sub-menu">
+            <context-menu :menu="item.menu" :parent="item.name" :focused="item.focused"></context-menu>
           </div>
         </div>
       </div>
     </script>
-    <!-- <script src="./libs/template-web.js"></script> -->
     <script src="./js/tab-input.js"></script>
     <script src="./js/context-menu.js"></script>
     <script>
-      // let inputDom = document.getElementById('input');
-      // TabInput.init(inputDom);
-      // inputDom.focus();
+      let inputDom = document.getElementById('input');
+      TabInput.init(inputDom);
+      inputDom.focus();
     </script>
   </body>
 </html>
