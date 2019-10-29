@@ -1,10 +1,7 @@
-const storeKey = 'quickNote';
 
 class TabInput {
   static init(inputDom) {
-    // restore
-    let storeData = window.localStorage.getItem(storeKey);
-    if (storeData) inputDom.innerHTML = storeData;
+    
     // insert text node
     function insertRange(sel, str) {
       let range = sel.getRangeAt(0);
@@ -95,7 +92,8 @@ class TabInput {
     function onInputChange() {
       // store
       let storeData = inputDom.innerHTML;
-      window.localStorage.setItem(storeKey, storeData);
+      // window.localStorage.setItem(storeKey, storeData);
+      Store.$emit('dataChange',storeData)
     }
     //
     inputDom.addEventListener('input', e => {
