@@ -1,6 +1,6 @@
 // menu definition
 let themesMenu = {
-  name: 'themes',
+  name: 'Themes',
   menu: [
     {
       name: 'Breeze',
@@ -31,7 +31,12 @@ let themesMenu = {
   focused: ''
 };
 // 上下文菜单，支持多级
-let contextMenu = [themesMenu];
+let contextMenu = [
+  themesMenu,
+  {
+    name: '新建项目'
+  }
+];
 const ThemeKey = 'quickNote_theme';
 const storeTheme = window.localStorage.getItem(ThemeKey);
 
@@ -74,9 +79,11 @@ document.oncontextmenu = e => {
 
 // apply theme
 document.getElementById('menu').onmousedown = e => {
-  if (e.target.dataset.parent === 'themes') {
+  if (e.target.dataset.parent === 'Themes') {
     applyTheme(e.target.dataset.name);
     window.localStorage.setItem(ThemeKey, e.target.dataset.name);
+  } else if (e.target.dataset.name == contextMenu[1].name) {
+    console.log('弹出新建项目对话框');
   }
 };
 
