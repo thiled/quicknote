@@ -5,16 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>QuickNote</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css" />
     <script src="./libs/vue.min.js"></script>
     <script src="./libs/dexie.min.js"></script>
   </head>
   <body>
     <div id="app">
       <div id="input" spellcheck="false"></div>
-      <div id="menu" v-show="menuShow" :style="menuPosition">
+      <div id="menu" v-show="menuShow" :style="menuPosition" @mousedown="onMenuSelect">
         <context-menu :menu="contextMenu"></context-menu>
       </div>
+      <v-dialog v-show="newProjectDialogShow">
+        <div class="new-project-dialog-content">
+          <input type="text" v-model="newProjectName">
+          <button @click="onProjectCreate">确定</button>
+        </div>
+      </v-dialog>
     </div>
     <script type="text/html" id="context-menu">
       <div>
@@ -31,6 +37,15 @@
         </div>
       </div>
     </script>
+    <script type="text/html" id="dialog">
+        <div class="dialog" >
+          <div class="dialog-content-wrapper">
+            <slot>
+            </slot>
+          </div>
+        </div>
+    </script>
+
     <script src="./js/store.js"></script>
     <script src="./js/tab-input.js"></script>
     <script src="./js/context-menu.js"></script>

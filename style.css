@@ -1,57 +1,82 @@
 body {
-    margin: 0px;
-    font-size: 16px;
-    font-family: Arial, Helvetica, sans-serif;
-  }
-  #input {
-    tab-size: 6;
-    min-height: 100px;
-    line-height: 1.5;
-    padding: 16px;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: -1;
-    cursor: default;
-  }
-  #input:focus {
-    outline: none;
-  }
+  margin: 0px;
+  font-size: 16px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+#input {
+  tab-size: 6;
+  min-height: 100px;
+  line-height: 1.5;
+  padding: 16px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  cursor: default;
+}
+#input:focus {
+  outline: none;
+}
 
-  #menu {
-    background: #eff0f2;
-    color: #000;
-    border: 1px solid #bdbec0;
-    display: block;
-    position: absolute;
-    font-size: 14px;
-  }
-  .menu-item {
-    display: block;
-    cursor: default;
-    padding: 5px 10px;
-    position: relative;
-  }
-  .menu-item.active {
-    background: #3daeea;
-    color: #fff;
-  }
-  .menu-item:hover {
-    background: #3daeea;
-    color: #fff;
-  }
-  .sub-menu {
-    position: absolute;
-    display: none;
-    background: #eff0f2;
-    color: #000;
-    border: 1px solid #bdbec0;
-    font-size: 14px;
-    top: 0px;
-    left: 100%;
-  }
-  .menu-item:hover > .sub-menu {
-    display: inline-block;
-  }
+#menu {
+  background: #eff0f2;
+  color: #000;
+  border: 1px solid #bdbec0;
+  display: block;
+  position: absolute;
+  font-size: 14px;
+}
+.menu-item {
+  display: block;
+  cursor: default;
+  padding: 5px 10px;
+  position: relative;
+}
+.menu-item.active {
+  background: #3daeea;
+  color: #fff;
+}
+.menu-item:hover {
+  background: #3daeea;
+  color: #fff;
+}
+.sub-menu {
+  position: absolute;
+  display: none;
+  background: #eff0f2;
+  color: #000;
+  border: 1px solid #bdbec0;
+  font-size: 14px;
+  top: 0px;
+  left: 100%;
+}
+.menu-item:hover > .sub-menu {
+  display: inline-block;
+}
+
+.dialog {
+  position: fixed;
+  background: rgba(0, 0, 0, 0.5);
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  text-align: center;
+}
+.dialog::before {
+  content: '';
+  vertical-align: middle;
+  display: inline-block;
+  height: 100%;
+}
+.dialog-content-wrapper {
+  vertical-align: middle;
+  background-color: white;
+  display: inline-block;
+  border-radius: 3px;
+}
+.new-project-dialog-content {
+  padding: 10px;
+}

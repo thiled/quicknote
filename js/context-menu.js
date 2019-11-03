@@ -30,9 +30,20 @@ let themesMenu = {
   ],
   focused: ''
 };
+let projectListMenu = {
+  name: '项目列表',
+  menu: [],
+  focused: currentListName
+};
+db.lists.each(item => {
+  projectListMenu.menu.push({
+    name: item.name
+  });
+});
 // 上下文菜单，支持多级
 let contextMenu = [
   themesMenu,
+  projectListMenu,
   {
     name: '新建项目'
   }
@@ -44,7 +55,10 @@ Vue.component('context-menu', {
   props: ['menu', 'parent', 'focused'],
   template: document.getElementById('context-menu').innerHTML
 });
-
+Vue.component('v-dialog', {
+  props: ['isShown'],
+  template: document.getElementById('dialog').innerHTML
+});
 let app = new Vue({
   el: '#app',
   data: {
@@ -53,7 +67,9 @@ let app = new Vue({
     menuPosition: {
       left: 0,
       top: 0
-    }
+    },
+    newProjectDialogShow: false,
+    newProjectName: ''
   },
   mounted() {
     // control menu display
@@ -66,6 +82,30 @@ let app = new Vue({
         this.menuShow = false;
       }
     };
+  },
+  methods: {
+    onProjectCreate() {
+      this.newProjectDialogShow = false;
+      if (this.newProjectName) {
+        Store.$emit('projectChange', this.newProjectName);
+        projectListMenu.menu.push({
+          name: this.newProjectName
+        });
+        projectListMenu.focused = this.newProjectName;
+        this.newProjectName = '';
+      }
+    },
+    onMenuSelect(e) {
+      if (e.target.dataset.parent === themesMenu.name) {
+        applyTheme(e.target.dataset.name);
+        window.localStorage.setItem(ThemeKey, e.target.dataset.name);
+      } else if (e.target.dataset.name == contextMenu[2].name) {
+        this.newProjectDialogShow = true;
+      } else if (e.target.dataset.parent === projectListMenu.name) {
+        Store.$emit('projectChange', e.target.dataset.name);
+        projectListMenu.focused = e.target.dataset.name;
+      }
+    }
   }
 });
 
@@ -78,20 +118,13 @@ document.oncontextmenu = e => {
 };
 
 // apply theme
-document.getElementById('menu').onmousedown = e => {
-  if (e.target.dataset.parent === 'Themes') {
-    applyTheme(e.target.dataset.name);
-    window.localStorage.setItem(ThemeKey, e.target.dataset.name);
-  } else if (e.target.dataset.name == contextMenu[1].name) {
-    console.log('弹出新建项目对话框');
-  }
-};
+document.getElementById('menu').onmousedown = e => {};
 
 function applyTheme(themeName) {
   let themeObj = themesMenu.menu.find(item => item.name === themeName);
   if (!themeObj) return;
   themesMenu.focused = themeName;
-  Vue.set(app.contextMenu, 0, themesMenu);
+  // Vue.set(app.contextMenu, 0, themesMenu);
   document.body.style.color = themeObj.fontColor;
   document.body.style.background = themeObj.bgColor;
 }

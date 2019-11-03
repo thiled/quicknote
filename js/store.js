@@ -13,17 +13,24 @@ db.open().catch(function(err) {
   console.error(err.stack || err);
 });
 //如果name不存在,添加
-db.lists
-  .where('name')
-  .equals(currentListName)
-  .count()
-  .then(value => {
-    if (!value) {
-      db.lists.add({
-        name: currentListName
+function addListToDB() {
+  return new Promise((res, rej) => {
+    db.lists
+      .where('name')
+      .equals(currentListName)
+      .count()
+      .then(async value => {
+        if (!value) {
+          await db.lists.add({
+            name: currentListName
+          });
+          res();
+        } else {
+          rej('项目已存在');
+        }
       });
-    }
   });
+}
 
 // 从indexedDB获取数据
 async function restoreData() {
@@ -32,7 +39,7 @@ async function restoreData() {
     .equals(currentListName)
     .toArray();
   if (data.length) {
-    inputDom.innerHTML = data[0].content;
+    inputDom.innerHTML = data[0].content || '';
   }
 }
 restoreData();
@@ -45,4 +52,15 @@ Store.$on('dataChange', data => {
     .modify({
       content: data
     });
+});
+
+Store.$on('projectChange', async data => {
+  currentListName = data;
+  window.localStorage.setItem(lastListKey, currentListName);
+  try {
+    await addListToDB();
+  } catch (e) {
+    console.log(e);
+  }
+  restoreData();
 });
