@@ -33,13 +33,9 @@ let themesMenu = {
 let projectListMenu = {
   name: '项目列表',
   menu: [],
-  focused: currentListName
+  focused: ''
 };
-db.lists.each(item => {
-  projectListMenu.menu.push({
-    name: item.name
-  });
-});
+
 // 上下文菜单，支持多级
 let contextMenu = [
   themesMenu,
@@ -71,7 +67,7 @@ let app = new Vue({
     newProjectDialogShow: false,
     newProjectName: ''
   },
-  mounted() {
+  async mounted() {
     // control menu display
     document.onmousedown = e => {
       if (e.button === 2) {
@@ -82,16 +78,29 @@ let app = new Vue({
         this.menuShow = false;
       }
     };
+    //restore project menu
+    await this.restoreProjectMenu();
+    // restore project select
+    let currentListName = window.localStorage.getItem(lastListKey) || 'default';
+    this.onProjectCreate(currentListName);
   },
   methods: {
-    onProjectCreate() {
+    restoreProjectMenu() {
+      return new Promise((res, rej) => {
+        db.lists.toArray(lists => {
+          lists.forEach(item => {
+            projectListMenu.menu.push({
+              name: item.name
+            });
+          });
+          res();
+        });
+      });
+    },
+    onNewProjectConfirm() {
       this.newProjectDialogShow = false;
       if (this.newProjectName) {
-        Store.$emit('projectChange', this.newProjectName);
-        projectListMenu.menu.push({
-          name: this.newProjectName
-        });
-        projectListMenu.focused = this.newProjectName;
+        this.onProjectCreate(this.newProjectName);
         this.newProjectName = '';
       }
     },
@@ -102,8 +111,24 @@ let app = new Vue({
       } else if (e.target.dataset.name == contextMenu[2].name) {
         this.newProjectDialogShow = true;
       } else if (e.target.dataset.parent === projectListMenu.name) {
-        Store.$emit('projectChange', e.target.dataset.name);
-        projectListMenu.focused = e.target.dataset.name;
+        this.onProjectSelect(e.target.dataset.name);
+      }
+    },
+    onProjectSelect(projectName) {
+      Store.$emit('projectChange', projectName);
+      projectListMenu.focused = projectName;
+    },
+
+    onProjectCreate(projectName) {
+      // 如果是新名称则
+      if (!projectListMenu.menu.find(item => item.name === projectName)) {
+        Store.$emit('projectCreate', projectName);
+        projectListMenu.menu.push({
+          name: projectName
+        });
+        projectListMenu.focused = projectName;
+      } else {
+        this.onProjectSelect(projectName);
       }
     }
   }
