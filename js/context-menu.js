@@ -70,12 +70,15 @@ let app = new Vue({
   async mounted() {
     // control menu display
     document.onmousedown = e => {
+      if (e.button != 2) {
+        this.menuShow = false;
+      }
+    };
+    document.getElementById('input').onmousedown = e => {
       if (e.button === 2) {
         this.menuShow = true;
         this.menuPosition.left = e.clientX + 'px';
         this.menuPosition.top = e.clientY + 'px';
-      } else {
-        this.menuShow = false;
       }
     };
     //restore project menu
