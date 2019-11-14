@@ -52,8 +52,15 @@ Vue.component('context-menu', {
   template: document.getElementById('context-menu').innerHTML
 });
 Vue.component('v-dialog', {
-  props: ['isShown'],
-  template: document.getElementById('dialog').innerHTML
+  props: ['show'],
+  template: document.getElementById('dialog').innerHTML,
+  watch: {
+    show: function(newVal) {
+      if (newVal) {
+        this.$emit('onshow');
+      }
+    }
+  }
 });
 let app = new Vue({
   el: '#app',
@@ -86,6 +93,11 @@ let app = new Vue({
     // restore project select
     let currentListName = window.localStorage.getItem(lastListKey) || 'default';
     this.onProjectCreate(currentListName);
+    this.$refs.newProjectInput.onkeydown = e => {
+      if (e.keyCode === 13) {
+        this.onNewProjectConfirm();
+      }
+    };
   },
   methods: {
     restoreProjectMenu() {
@@ -121,7 +133,11 @@ let app = new Vue({
       Store.$emit('projectChange', projectName);
       projectListMenu.focused = projectName;
     },
-
+    onNewProjectDialogShow() {
+      setTimeout(() => {
+        this.$refs.newProjectInput.focus();
+      }, 0);
+    },
     onProjectCreate(projectName) {
       // 如果是新名称则
       if (!projectListMenu.menu.find(item => item.name === projectName)) {

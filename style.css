@@ -33,6 +33,7 @@ body {
   cursor: default;
   padding: 5px 10px;
   position: relative;
+  white-space: nowrap
 }
 .menu-item.active {
   background: #3daeea;

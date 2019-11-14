@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>QuickNote</title>
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="style.css" />
     <script src="./libs/vue.min.js"></script>
     <script src="./libs/dexie.min.js"></script>
@@ -13,12 +13,20 @@
   <body>
     <div id="app">
       <div id="input" spellcheck="false"></div>
-      <div id="menu" v-show="menuShow" :style="menuPosition" @mousedown="onMenuSelect">
+      <div
+        id="menu"
+        v-show="menuShow"
+        :style="menuPosition"
+        @mousedown="onMenuSelect"
+      >
         <context-menu :menu="contextMenu"></context-menu>
       </div>
-      <v-dialog v-show="newProjectDialogShow">
+      <v-dialog
+        :show.async="newProjectDialogShow"
+        @onshow="onNewProjectDialogShow"
+      >
         <div class="new-project-dialog-content">
-          <input type="text" v-model="newProjectName">
+          <input type="text" v-model="newProjectName" ref="newProjectInput" />
           <button @click="onNewProjectConfirm">确定</button>
         </div>
       </v-dialog>
@@ -39,17 +47,17 @@
       </div>
     </script>
     <script type="text/html" id="dialog">
-        <div class="dialog" >
-          <div class="dialog-content-wrapper">
-            <slot>
-            </slot>
-          </div>
+      <div class="dialog" v-show="show">
+        <div class="dialog-content-wrapper">
+          <slot>
+          </slot>
         </div>
+      </div>
     </script>
 
     <script src="./js/store.js"></script>
     <script src="./js/tab-input.js"></script>
-    <script src="./js/context-menu.js"></script>
+    <script src="./js/app.js"></script>
     <script>
       let inputDom = document.getElementById('input');
       TabInput.init(inputDom);
