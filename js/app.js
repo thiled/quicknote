@@ -1,49 +1,9 @@
-// menu definition
-let themesMenu = {
-  name: 'Themes',
-  menu: [
-    {
-      name: 'Breeze',
-      bgColor: '#232627',
-      fontColor: '#fcfcfc'
-    },
-    {
-      name: 'Monokai',
-      bgColor: '#272822',
-      fontColor: '#a6e22e'
-    },
-    {
-      name: 'Light',
-      bgColor: '#fff',
-      fontColor: '#000'
-    },
-    {
-      name: 'Terminal',
-      bgColor: '#000',
-      fontColor: '#18f018'
-    },
-    {
-      name: 'VSCode',
-      bgColor: '#1e1e1e',
-      fontColor: '#9cdcfe'
-    }
-  ],
-  focused: ''
-};
-let projectListMenu = {
-  name: '项目列表',
-  menu: [],
-  focused: ''
-};
-
-// 上下文菜单，支持多级
-let contextMenu = [
-  themesMenu,
+import {
+  contextMenu,
   projectListMenu,
-  {
-    name: '新建项目'
-  }
-];
+  themesMenu,
+  newProjectMenu
+} from './context-menu.js';
 const ThemeKey = 'quickNote_theme';
 const storeTheme = window.localStorage.getItem(ThemeKey);
 
@@ -75,12 +35,19 @@ let app = new Vue({
     newProjectName: ''
   },
   async mounted() {
+    // restore theme
+    this.applyTheme(storeTheme || 'Light');
+    // prevent default context menu
+    document.oncontextmenu = e => {
+      e.preventDefault();
+    };
     // control menu display
     document.onmousedown = e => {
       if (e.button != 2) {
         this.menuShow = false;
       }
     };
+    // menu display control
     document.getElementById('input').onmousedown = e => {
       if (e.button === 2) {
         this.menuShow = true;
@@ -100,6 +67,14 @@ let app = new Vue({
     };
   },
   methods: {
+    applyTheme(themeName) {
+      let themeObj = themesMenu.menu.find(item => item.name === themeName);
+      if (!themeObj) return;
+      themesMenu.focused = themeName;
+      // Vue.set(app.contextMenu, 0, themesMenu);
+      document.body.style.color = themeObj.fontColor;
+      document.body.style.background = themeObj.bgColor;
+    },
     restoreProjectMenu() {
       return new Promise((res, rej) => {
         db.lists.toArray(lists => {
@@ -121,9 +96,9 @@ let app = new Vue({
     },
     onMenuSelect(e) {
       if (e.target.dataset.parent === themesMenu.name) {
-        applyTheme(e.target.dataset.name);
+        this.applyTheme(e.target.dataset.name);
         window.localStorage.setItem(ThemeKey, e.target.dataset.name);
-      } else if (e.target.dataset.name == contextMenu[2].name) {
+      } else if (e.target.dataset.name == newProjectMenu.name) {
         this.newProjectDialogShow = true;
       } else if (e.target.dataset.parent === projectListMenu.name) {
         this.onProjectSelect(e.target.dataset.name);
@@ -152,23 +127,3 @@ let app = new Vue({
     }
   }
 });
-
-// restore theme
-applyTheme(storeTheme || 'Light');
-
-// prevent default context menu
-document.oncontextmenu = e => {
-  e.preventDefault();
-};
-
-// apply theme
-document.getElementById('menu').onmousedown = e => {};
-
-function applyTheme(themeName) {
-  let themeObj = themesMenu.menu.find(item => item.name === themeName);
-  if (!themeObj) return;
-  themesMenu.focused = themeName;
-  // Vue.set(app.contextMenu, 0, themesMenu);
-  document.body.style.color = themeObj.fontColor;
-  document.body.style.background = themeObj.bgColor;
-}
