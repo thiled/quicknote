@@ -89,8 +89,8 @@ let app = new Vue({
     document.getElementById('input').onmousedown = e => {
       if (e.button === 2) {
         this.menuShow = true;
-        this.menuPosition.left = e.clientX + 'px';
-        this.menuPosition.top = e.clientY + 'px';
+        this.menuPosition.left = e.pageX + 'px';
+        this.menuPosition.top = e.pageY + 'px';
       }
     };
     //restore project menu
