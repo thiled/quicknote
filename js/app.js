@@ -38,9 +38,11 @@ let projectListMenu = {
 let newProjectMenu = {
   name: '新建项目'
 };
-
+let delProjectMenu = {
+  name: '删除项目'
+};
 // 上下文菜单，支持多级
-let contextMenu = [newProjectMenu, projectListMenu, themesMenu];
+let contextMenu = [newProjectMenu, projectListMenu, themesMenu, delProjectMenu];
 
 const ThemeKey = 'quickNote_theme';
 const storeTheme = window.localStorage.getItem(ThemeKey);
@@ -73,6 +75,9 @@ let app = new Vue({
     newProjectName: ''
   },
   async mounted() {
+    Store.$on('projectChange', projectName => {
+      projectListMenu.focused = projectName;
+    });
     // restore theme
     this.applyTheme(storeTheme || 'Light');
     // prevent default context menu
@@ -103,6 +108,9 @@ let app = new Vue({
         this.onNewProjectConfirm();
       }
     };
+    Store.$on('projectDeleted', projectName => {
+      projectListMenu.menu.splice(projectListMenu.menu.indexOf(projectName), 1);
+    });
   },
   methods: {
     applyTheme(themeName) {
@@ -136,15 +144,16 @@ let app = new Vue({
       if (e.target.dataset.parent === themesMenu.name) {
         this.applyTheme(e.target.dataset.name);
         window.localStorage.setItem(ThemeKey, e.target.dataset.name);
-      } else if (e.target.dataset.name == newProjectMenu.name) {
+      } else if (e.target.dataset.name === newProjectMenu.name) {
         this.newProjectDialogShow = true;
       } else if (e.target.dataset.parent === projectListMenu.name) {
         this.onProjectSelect(e.target.dataset.name);
+      } else if (e.target.dataset.name === delProjectMenu.name) {
+        this.onProjectDelete();
       }
     },
     onProjectSelect(projectName) {
       Store.$emit('projectChange', projectName);
-      projectListMenu.focused = projectName;
     },
     onNewProjectDialogShow() {
       setTimeout(() => {
@@ -162,6 +171,9 @@ let app = new Vue({
       } else {
         this.onProjectSelect(projectName);
       }
+    },
+    onProjectDelete() {
+      Store.$emit('projectDelete');
     }
   }
 });

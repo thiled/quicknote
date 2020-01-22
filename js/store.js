@@ -65,3 +65,19 @@ Store.$on('projectChange', async data => {
   window.localStorage.setItem(lastListKey, currentListName);
   restoreData();
 });
+//删除项目
+Store.$on('projectDelete', async data => {
+  //如果只有一个项目，禁止删除
+  //检查列表长度
+  let listLength = await db.lists.count();
+  if (listLength <= 1) {
+    return;
+  }
+  //删除当前项目
+  await db.lists.delete(currentListName);
+  Store.$emit('projectDeleted', currentListName);
+  //切换到其它项目
+  let nextProjectName = (await db.lists.toArray())[0].name;
+  console.log(nextProjectName);
+  Store.$emit('projectChange', nextProjectName);
+});
