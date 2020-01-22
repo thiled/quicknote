@@ -36,6 +36,7 @@
         <div v-for="item in menu"
           class="menu-item"
           :class="{active:item.name === focused}"
+          :key="item.name"
           :data-name="item.name"
           :data-parent="parent ? parent : '' "
         >
