@@ -103,13 +103,18 @@ let app = new Vue({
     // restore project select
     let currentListName = window.localStorage.getItem(lastListKey) || 'default';
     this.onProjectCreate(currentListName);
-    this.$refs.newProjectInput.onkeydown = e => {
+    this.$refs.newProjectInput.onkeyup = e => {
       if (e.keyCode === 13) {
         this.onNewProjectConfirm();
       }
     };
     Store.$on('projectDeleted', projectName => {
       projectListMenu.menu.splice(projectListMenu.menu.indexOf(projectName), 1);
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && this.newProjectDialogShow) {
+        this.newProjectDialogShow = false;
+      }
     });
   },
   methods: {
@@ -139,6 +144,8 @@ let app = new Vue({
         this.onProjectCreate(this.newProjectName);
         this.newProjectName = '';
       }
+      let inputDom = document.getElementById('input');
+      inputDom.focus();
     },
     onMenuSelect(e) {
       if (e.target.dataset.parent === themesMenu.name) {

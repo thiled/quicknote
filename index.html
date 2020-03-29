@@ -27,7 +27,7 @@
       >
         <div class="new-project-dialog-content">
           <input type="text" v-model="newProjectName" ref="newProjectInput" />
-          <button @click="onNewProjectConfirm">确定</button>
+          <button @click="onNewProjectConfirm" :disabled="!newProjectName">确定</button>
         </div>
       </v-dialog>
     </div>
