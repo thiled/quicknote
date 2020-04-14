@@ -5,41 +5,41 @@ let themesMenu = {
     {
       name: 'Breeze',
       bgColor: '#232627',
-      fontColor: '#fcfcfc'
+      fontColor: '#fcfcfc',
     },
     {
       name: 'Monokai',
       bgColor: '#272822',
-      fontColor: '#a6e22e'
+      fontColor: '#a6e22e',
     },
     {
       name: 'Light',
       bgColor: '#fff',
-      fontColor: '#000'
+      fontColor: '#000',
     },
     {
       name: 'Terminal',
       bgColor: '#000',
-      fontColor: '#18f018'
+      fontColor: '#18f018',
     },
     {
       name: 'VSCode',
       bgColor: '#1e1e1e',
-      fontColor: '#9cdcfe'
-    }
+      fontColor: '#9cdcfe',
+    },
   ],
-  focused: ''
+  focused: '',
 };
 let projectListMenu = {
   name: '项目列表',
   menu: [],
-  focused: ''
+  focused: '',
 };
 let newProjectMenu = {
-  name: '新建项目'
+  name: '新建项目',
 };
 let delProjectMenu = {
-  name: '删除项目'
+  name: '删除项目',
 };
 // 上下文菜单，支持多级
 let contextMenu = [newProjectMenu, projectListMenu, themesMenu, delProjectMenu];
@@ -49,18 +49,18 @@ const storeTheme = window.localStorage.getItem(ThemeKey);
 
 Vue.component('context-menu', {
   props: ['menu', 'parent', 'focused'],
-  template: document.getElementById('context-menu').innerHTML
+  template: document.getElementById('context-menu').innerHTML,
 });
 Vue.component('v-dialog', {
   props: ['show'],
   template: document.getElementById('dialog').innerHTML,
   watch: {
-    show: function(newVal) {
+    show: function (newVal) {
       if (newVal) {
         this.$emit('onshow');
       }
-    }
-  }
+    },
+  },
 });
 let app = new Vue({
   el: '#app',
@@ -69,29 +69,29 @@ let app = new Vue({
     menuShow: false,
     menuPosition: {
       left: 0,
-      top: 0
+      top: 0,
     },
     newProjectDialogShow: false,
-    newProjectName: ''
+    newProjectName: '',
   },
   async mounted() {
-    Store.$on('projectChange', projectName => {
+    Store.$on('projectChange', (projectName) => {
       projectListMenu.focused = projectName;
     });
     // restore theme
     this.applyTheme(storeTheme || 'Light');
     // prevent default context menu
-    document.oncontextmenu = e => {
+    document.oncontextmenu = (e) => {
       e.preventDefault();
     };
     // control menu display
-    document.onmousedown = e => {
+    document.onmousedown = (e) => {
       if (e.button != 2) {
         this.menuShow = false;
       }
     };
     // menu display control
-    document.getElementById('input').onmousedown = e => {
+    document.getElementById('input').onmousedown = (e) => {
       if (e.button === 2) {
         this.menuShow = true;
         this.menuPosition.left = e.pageX + 'px';
@@ -103,15 +103,21 @@ let app = new Vue({
     // restore project select
     let currentListName = window.localStorage.getItem(lastListKey) || 'default';
     this.onProjectCreate(currentListName);
-    this.$refs.newProjectInput.onkeyup = e => {
+    this.$refs.newProjectInput.onkeyup = (e) => {
       if (e.keyCode === 13) {
         this.onNewProjectConfirm();
       }
     };
-    Store.$on('projectDeleted', projectName => {
-      projectListMenu.menu.splice(projectListMenu.menu.indexOf(projectName), 1);
+    Store.$on('projectDeleted', (projectName) => {
+      let targetMenuItem = projectListMenu.menu.find((item) => {
+        return item.name === projectName;
+      });
+      projectListMenu.menu.splice(
+        projectListMenu.menu.indexOf(targetMenuItem),
+        1
+      );
     });
-    document.addEventListener('keydown', e => {
+    document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && this.newProjectDialogShow) {
         this.newProjectDialogShow = false;
       }
@@ -119,7 +125,7 @@ let app = new Vue({
   },
   methods: {
     applyTheme(themeName) {
-      let themeObj = themesMenu.menu.find(item => item.name === themeName);
+      let themeObj = themesMenu.menu.find((item) => item.name === themeName);
       if (!themeObj) return;
       themesMenu.focused = themeName;
       // Vue.set(app.contextMenu, 0, themesMenu);
@@ -128,10 +134,10 @@ let app = new Vue({
     },
     restoreProjectMenu() {
       return new Promise((res, rej) => {
-        db.lists.toArray(lists => {
-          lists.forEach(item => {
+        db.lists.toArray((lists) => {
+          lists.forEach((item) => {
             projectListMenu.menu.push({
-              name: item.name
+              name: item.name,
             });
           });
           res();
@@ -169,10 +175,10 @@ let app = new Vue({
     },
     onProjectCreate(projectName) {
       // 如果是新名称则
-      if (!projectListMenu.menu.find(item => item.name === projectName)) {
+      if (!projectListMenu.menu.find((item) => item.name === projectName)) {
         Store.$emit('projectCreate', projectName);
         projectListMenu.menu.push({
-          name: projectName
+          name: projectName,
         });
         projectListMenu.focused = projectName;
       } else {
@@ -181,6 +187,6 @@ let app = new Vue({
     },
     onProjectDelete() {
       Store.$emit('projectDelete');
-    }
-  }
+    },
+  },
 });
